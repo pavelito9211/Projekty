@@ -9,7 +9,7 @@ int main()
 {
     long long zostatok;
     int id, volba;
-    string subor;
+    string subor,pocethistoria;
     cout<<"(V pripade ze nemas Ucet zadaj 0)\n\n";
     cout<<"Zadaj ID pouzivatela: ";
     cin >>id;
@@ -49,7 +49,7 @@ int main()
                     out << 0;
                     out.close();
                     zostatok = 0;
-                    cout << "\nUcet s ID: " << id << " bol vytvoreny. Pokracujeme do bankomatu.\n\n";
+                    cout << "\nUcet s ID: " << id << " bol vytvoreny.";
                     break;
                     }
                 }
@@ -60,18 +60,35 @@ int main()
             exit(0);
             }
         }
+    pocethistoria = to_string(id) + "historia.txt";
+    ifstream testhistoria (pocethistoria);
+    if (testhistoria.good())
+        {
+        cout<<"Historia uctu bola nacitana. Pokracujeme do bankomatu\n\n";
+        }
+    else
+        {
+        testhistoria.close();
+        ofstream outhistoria (pocethistoria);
+        outhistoria << 0;
+        outhistoria.close();
+        }
     long long akcia, vklad, vyber;
+    string transakcia;
+    string historia[5];
+    int pocet;
     cout<<"1. Stav uctu\n";
     cout<<"2. Vklad na ucet\n";
     cout<<"3. Vybrat peniaze\n";
-    cout<<"4. Ukoncit program\n";
-    cout<<"5. Poslat peniaze\n";
+    cout<<"4. Poslat peniaze\n";
+    cout<<"5. Historia transakii\n";
+    cout<<"6. Ukoncit program\n";
         do
         {
         cout<<"\n\nZadaj cislo pozadovanej akcie: ";
         cin >>akcia;
         cout<<"\n";
-        if (akcia==4)
+        if (akcia==6)
             {
             ofstream out(subor);
             out << zostatok;
@@ -91,6 +108,22 @@ int main()
                 out << zostatok;
                 out.close();
                 cout<<"Novy zostatok na ucte: "<<zostatok<<" Euro";
+                transakcia = "Vklad " + to_string(vklad) + " Euro. Nový zostatok " + to_string(zostatok) + " Euro";
+                ifstream inhistoria (pocethistoria);
+                
+                if (pocet<5)
+                    {
+                    historia[pocet] = transakcia;
+                    pocet++;
+                    }
+                else
+                    {
+                    for (int i=1; i<5; i++)
+                        {
+                        historia[i-1] = historia[i];
+                        }
+                    historia[4] = transakcia;
+                    }
                 }
             else
                 cout<<"Neplatna hodnota";
@@ -106,13 +139,27 @@ int main()
                 out << zostatok;
                 out.close();
                 cout<<"Novy zostatok na ucte: "<<zostatok<<" Euro";
+                transakcia = "Vyber " + to_string(vyber) + " Euro. Nový zostatok " + to_string(zostatok) + " Euro";
+                if (pocet<5)
+                    {
+                    historia[pocet] = transakcia;
+                    pocet++;
+                    }
+                else
+                    {
+                    for (int i=1; i<5; i++)
+                        {
+                        historia[i-1] = historia[i];
+                        }
+                    historia[4] = transakcia;
+                    }
                 }
             else if (vyber>zostatok)
                 cout<<"Nedostatok zdrojov na ucte";
             else 
                 cout<<"Neplatna hodnota";
             }
-        else if (akcia==5)
+        else if (akcia==4)
             {
             int idprijem;
             long long posielanie, zostatokprijem;
@@ -153,6 +200,10 @@ int main()
                 }  
             else
                 cout<<"Ucet sa nenasiel\n";
+            }
+            else if (akcia==5)
+            {
+            
             }
         }   while(true);
     return 0;
