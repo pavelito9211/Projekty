@@ -9,7 +9,7 @@ int main()
 {
     long long zostatok;
     int id, volba;
-    string subor,pocethistoria;
+    string subor,suborhistoria,pocethistoria;
     cout<<"(V pripade ze nemas Ucet zadaj 0)\n\n";
     cout<<"Zadaj ID pouzivatela: ";
     cin >>id;
@@ -60,18 +60,24 @@ int main()
             exit(0);
             }
         }
-    pocethistoria = to_string(id) + "historia.txt";
-    ifstream testhistoria (pocethistoria);
-    if (testhistoria.good())
+    suborhistoria = to_string(id) + "historia.txt";
+    pocethistoria = to_string(id) + "pocet.txt";
+    ifstream testhistoria (suborhistoria);
+    ifstream testpocet (pocethistoria);
+    if (testhistoria.good() && testpocet.good())
         {
         cout<<"Historia uctu bola nacitana. Pokracujeme do bankomatu\n\n";
         }
     else
         {
         testhistoria.close();
-        ofstream outhistoria (pocethistoria);
-        outhistoria << 0;
+        testpocet.close();
+        ofstream outhistoria (suborhistoria);
+        outhistoria << "";
         outhistoria.close();
+        ofstream outpocet (pocethistoria);
+        outpocet << 0;
+        outpocet.close();
         }
     long long akcia, vklad, vyber;
     string transakcia;
@@ -109,8 +115,14 @@ int main()
                 out.close();
                 cout<<"Novy zostatok na ucte: "<<zostatok<<" Euro";
                 transakcia = "Vklad " + to_string(vklad) + " Euro. Nový zostatok " + to_string(zostatok) + " Euro";
-                ifstream inhistoria (pocethistoria);
-                
+                ifstream inpocet (pocethistoria);
+                inpocet >> pocet;
+                ifstream inhistoria (suborhistoria);
+                for (int a=0; a<pocet && a<5; a++)
+                {
+                getline (inhistoria, historia[a]);
+                }
+
                 if (pocet<5)
                     {
                     historia[pocet] = transakcia;
@@ -124,6 +136,15 @@ int main()
                         }
                     historia[4] = transakcia;
                     }
+                ofstream outpocet (pocethistoria);
+                outpocet << pocet;
+                outpocet.close();
+                ofstream outhistoria (suborhistoria);
+                for (int b=0; b<pocet && b<5; b++)
+                {
+                outhistoria << historia[b] <<endl;
+                }
+                outhistoria.close();
                 }
             else
                 cout<<"Neplatna hodnota";
@@ -140,6 +161,14 @@ int main()
                 out.close();
                 cout<<"Novy zostatok na ucte: "<<zostatok<<" Euro";
                 transakcia = "Vyber " + to_string(vyber) + " Euro. Nový zostatok " + to_string(zostatok) + " Euro";
+                ifstream inpocet (pocethistoria);
+                inpocet >> pocet;
+                ifstream inhistoria (suborhistoria);
+                for (int a=0; a<pocet && a<5; a++)
+                {
+                getline (inhistoria, historia[a]);
+                }
+
                 if (pocet<5)
                     {
                     historia[pocet] = transakcia;
@@ -153,6 +182,15 @@ int main()
                         }
                     historia[4] = transakcia;
                     }
+                ofstream outpocet (pocethistoria);
+                outpocet << pocet;
+                outpocet.close();
+                ofstream outhistoria (suborhistoria);
+                for (int b=0; b<pocet && b<5; b++)
+                {
+                outhistoria << historia[b] <<endl;
+                }
+                outhistoria.close();
                 }
             else if (vyber>zostatok)
                 cout<<"Nedostatok zdrojov na ucte";
@@ -192,6 +230,37 @@ int main()
                     out.close();
                     cout<<"Suma "<<posielanie<<" eur bola uspesne poslana na ucet "<<idprijem<<"\n";
                     cout<<"Novy zostatok na ucte je "<<zostatok<<" eur\n";
+                    transakcia = "Poslanie " + to_string(posielanie) + " Euro na ucet " + to_string(idprijem) + ". Nový zostatok " + to_string(zostatok) + " Euro";
+                    ifstream inpocet (pocethistoria);
+                    inpocet >> pocet;
+                    ifstream inhistoria (suborhistoria);
+                    for (int a=0; a<pocet && a<5; a++)
+                    {
+                    getline (inhistoria, historia[a]);
+                    }
+
+                    if (pocet<5)
+                        {
+                        historia[pocet] = transakcia;
+                        pocet++;
+                        }
+                    else
+                        {
+                        for (int i=1; i<5; i++)
+                            {
+                            historia[i-1] = historia[i];
+                            }
+                        historia[4] = transakcia;
+                        }
+                    ofstream outpocet (pocethistoria);
+                    outpocet << pocet;
+                    outpocet.close();
+                    ofstream outhistoria (suborhistoria);
+                    for (int b=0; b<pocet && b<5; b++)
+                    {
+                    outhistoria << historia[b] <<endl;
+                    }
+                    outhistoria.close();
                     }
                 else if (posielanie>zostatok)
                     cout<<"Nedostatok zdrojov na ucte\n";
@@ -203,8 +272,21 @@ int main()
             }
             else if (akcia==5)
             {
-            
+            cout <<"Historia transakcii:\n";
+            ifstream inpocet (pocethistoria);
+            inpocet >> pocet;
+            inpocet.close();
+            ifstream inhistoria (suborhistoria);
+            for (int c=0; c<pocet && c<5; c++)
+            {
+            getline (inhistoria, historia[c]);
+            }
+            inhistoria.close();
+            for (int d=0; d<pocet && d<5; d++)
+            {
+            cout<<historia[d]<<endl;
+            }
             }
         }   while(true);
     return 0;
-}
+} 
