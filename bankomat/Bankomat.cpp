@@ -18,7 +18,6 @@ int main()
     ifstream in(subor);
     if (in.good())
         {
-        cout<<"Ucet sa nasiel. Pokracujeme do bankomatu.\n\n";
         in >> zostatok;
         in.close();
         }
